@@ -1,0 +1,68 @@
+#!/usr/bin/env php
+<?php
+
+use BiffBangPow\DockerDiskUsage\DockerDiskUsage;
+use GetOpt\ArgumentException;
+use GetOpt\GetOpt;
+use GetOpt\Option;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+define('NAME', 'DockerDiskUsage');
+define('VERSION', '0.1.0');
+
+$getOpt = new GetOpt();
+$getOpt->addOptions([
+
+    Option::create('v', 'version', GetOpt::NO_ARGUMENT)
+        ->setDescription('Show version information.'),
+
+    Option::create('h', 'help', GetOpt::NO_ARGUMENT)
+        ->setDescription('Show the information you\'re reading now.'),
+
+    Option::create(null, 'detailed', GetOpt::NO_ARGUMENT)
+        ->setDescription('Show detailed breakdown, by container, volume and image.'),
+
+    Option::create(null, 'plain-text', GetOpt::NO_ARGUMENT)
+        ->setDescription('Do not use bold, colours etc. in CLI output.'),
+
+    Option::create(null, 'include-mounts', GetOpt::NO_ARGUMENT)
+        ->setDescription('Include data for mounts, except for volumes, which are covered separately.'),
+
+]);
+
+try {
+    $getOpt->process();
+} catch (ArgumentException $exception) {
+    file_put_contents('php://stderr', $exception->getMessage() . PHP_EOL);
+    echo PHP_EOL . $getOpt->getHelpText();
+    exit;
+}
+
+$dockerDiskUsage = new DockerDiskUsage();
+
+if ($getOpt->getOption('version')) {
+    echo sprintf('%s: %s' . PHP_EOL, NAME, VERSION);
+    exit;
+}
+
+if ($getOpt->getOption('help')) {
+    echo $getOpt->getHelpText();
+    exit;
+}
+
+if ($getOpt->getOption('plain-text')) {
+    $dockerDiskUsage->disableTextFormatting();
+}
+
+if ($getOpt->getOption('include-mounts')) {
+    $dockerDiskUsage->enableIncludeMounts();
+}
+
+if ($getOpt->getOption('detailed')) {
+    echo $dockerDiskUsage->plainTextReport(DockerDiskUsage::DETAILED_REPORT);
+    exit;
+} else {
+    echo $dockerDiskUsage->plainTextReport(DockerDiskUsage::SUMMARY_REPORT);
+    exit;
+}

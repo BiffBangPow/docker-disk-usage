@@ -1,0 +1,17 @@
+{
+    "name": "biffbangpow/docker-disk-usage",
+    "description": "A simple tool to find out how much disk space your Docker \"things\" are using.",
+    "version": "0.1.0",
+    "require": {
+        "php": ">=7.0",
+        "danielstjules/stringy": "^3",
+        "kevinlebrun/colors.php": "^1",
+        "docker-php/docker-php": "^1.24",
+        "ulrichsg/getopt-php": "^3.0@beta"
+    },
+    "autoload": {
+        "psr-4": {
+            "BiffBangPow\\DockerDiskUsage\\": "src/"
+        }
+    }
+}
