@@ -20,8 +20,8 @@ class DockerDiskUsage
     const INCLUDE_MOUNTS = true;
     const EXCLUDE_MOUNTS = false;
 
-    const NAME_WIDTH = 50;
-    const STATUS_WIDTH = 17;
+    const NAME_WIDTH = 60;
+    const STATUS_WIDTH = 27;
     const TABBED_WIDTH = self::ROUND_TO;
     const ROUND_TO = 3;
 
@@ -305,7 +305,7 @@ class DockerDiskUsage
      */
     private function getContainerData()
     {
-        $containers = $this->docker->getContainerManager()->findAll(['size' => true]);
+        $containers = $this->docker->getContainerManager()->findAll(['all' => true, 'size' => true]);
         foreach ($containers as $container) {
             // Apparently it's possible for containers to have multiple names.
             // @WillGibson has not come across this before, but we may need to address it at some point.
