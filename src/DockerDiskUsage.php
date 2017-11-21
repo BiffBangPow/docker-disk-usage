@@ -21,7 +21,7 @@ class DockerDiskUsage
     const EXCLUDE_MOUNTS = false;
 
     const NAME_WIDTH = 60;
-    const STATUS_WIDTH = 27;
+    const STATUS_WIDTH = 28;
     const TABBED_WIDTH = self::ROUND_TO;
     const ROUND_TO = 3;
 
@@ -369,21 +369,9 @@ class DockerDiskUsage
     private function getMountsData(ContainerInfo $container)
     {
         $applicationMounts = [];
-        // It would be nice to do it like this commented out bit, but \Docker\API\Normalizer\MountNormalizer
-        // and \Docker\API\Model\Mount do not deal with Type yet. @WillGibson will look at submitting a PR for that.
-        // https://github.com/docker-php/docker-php/issues/251
-        // foreach ($container->getMounts() as $mount) {
-        //     if ($mount->getType() !== 'volume') {
-        //         $source = $mount->getSource();
-        //         if (array_key_exists($source, $applicationMounts) === false) {
-        //             $applicationMounts[$source] = $this->getFilePathSize($source);
-        //         }
-        //     }
-        // }
-        $containerData = $this->inspectContainer($container->getId());
-        foreach ($containerData['Mounts'] as $mount) {
-            if ($mount['Type'] !== 'volume') {
-                $source = $mount['Source'];
+        foreach ($container->getMounts() as $mount) {
+            if ($mount->getType() !== 'volume') {
+                $source = $mount->getSource();
                 if (array_key_exists($source, $applicationMounts) === false) {
                     $applicationMounts[$source] = $this->getFilePathSize($source);
                 }
